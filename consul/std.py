@@ -1,11 +1,12 @@
 import requests
 
-from consul import base
+from core.http import BaseHTTPClient
+from core.consul import BaseConsul
 
 __all__ = ['Consul']
 
 
-class HTTPClient(base.HTTPClient):
+class HTTPClient(BaseHTTPClient):
     def __init__(self, *args, **kwargs):
         super(HTTPClient, self).__init__(*args, **kwargs)
         self.session = requests.session()
@@ -59,7 +60,7 @@ class HTTPClient(base.HTTPClient):
                               timeout=self.timeout)))
 
 
-class Consul(base.Consul):
+class Consul(BaseConsul):
     @staticmethod
     def http_connect(host, port, scheme, verify=True, cert=None, timeout=None):
         return HTTPClient(host, port, scheme, verify, cert, timeout)

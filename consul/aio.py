@@ -6,13 +6,17 @@ import warnings
 
 import aiohttp
 
-from consul import base
+from core.consul import BaseConsul
+from core.http import BaseHTTPClient
+from core.response import Response
+
+from core.exceptions import Timeout
 
 __all__ = ['Consul']
 PY_341 = sys.version_info >= (3, 4, 1)
 
 
-class HTTPClient(base.HTTPClient):
+class HTTPClient(BaseHTTPClient):
     """Asyncio adapter for python consul using aiohttp library"""
 
     def __init__(self, *args, loop=None, **kwargs):
@@ -32,8 +36,8 @@ class HTTPClient(base.HTTPClient):
             body = await resp.text(encoding='utf-8')
             content = await resp.read()
             if resp.status == 599:
-                raise base.Timeout
-            r = base.Response(resp.status, resp.headers, body, content)
+                raise Timeout
+            r = Response(resp.status, resp.headers, body, content)
             await session.close()
             return callback(r)
 
@@ -79,7 +83,7 @@ class HTTPClient(base.HTTPClient):
         await self._session.close()
 
 
-class Consul(base.Consul):
+class Consul(BaseConsul):
 
     def __init__(self, *args, loop=None, **kwargs):
         self._loop = loop or asyncio.get_event_loop()

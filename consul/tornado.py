@@ -3,12 +3,15 @@ from __future__ import absolute_import
 from tornado import gen
 from tornado import httpclient
 
-from consul import base
+from core.consul import BaseConsul
+from core.http import BaseHTTPClient
+
+from core.exceptions import Timeout
 
 __all__ = ['Consul']
 
 
-class HTTPClient(base.HTTPClient):
+class HTTPClient(BaseHTTPClient):
     def __init__(self, *args, **kwargs):
         super(HTTPClient, self).__init__(*args, **kwargs)
         self.client = httpclient.AsyncHTTPClient()
@@ -27,7 +30,7 @@ class HTTPClient(base.HTTPClient):
             response = yield self.client.fetch(request)
         except httpclient.HTTPError as e:
             if e.code == 599:
-                raise base.Timeout
+                raise Timeout
             response = e.response
         raise gen.Return(callback(self.response(response)))
 
@@ -68,7 +71,7 @@ class HTTPClient(base.HTTPClient):
         return self._request(callback, request)
 
 
-class Consul(base.Consul):
+class Consul(BaseConsul):
     @staticmethod
     def http_connect(host, port, scheme, verify=True, cert=None):
         return HTTPClient(host, port, scheme, verify=verify, cert=cert)

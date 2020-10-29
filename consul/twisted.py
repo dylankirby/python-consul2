@@ -7,12 +7,16 @@ from twisted.internet import reactor
 from twisted.internet.defer import inlineCallbacks, returnValue
 from twisted.internet.error import ConnectError
 from twisted.internet.ssl import ClientContextFactory
-from twisted.web._newclient import \
-    ResponseNeverReceived, RequestTransmissionFailed
+from twisted.web._newclient import (
+    ResponseNeverReceived,
+    RequestTransmissionFailed
+)
 from twisted.web.client import Agent, HTTPConnectionPool
 
-from consul import base
+from core.consul import BaseConsul
+from core.http import BaseHTTPClient
 from consul.base import ConsulException
+
 
 __all__ = ['Consul']
 
@@ -31,7 +35,7 @@ class InsecureContextFactory(ClientContextFactory):
         return ClientContextFactory.getContext(self)
 
 
-class HTTPClient(base.HTTPClient):
+class HTTPClient(BaseHTTPClient):
     def __init__(self, contextFactory, *args, **kwargs):
         super(HTTPClient, self).__init__(*args, **kwargs)
         agent_kwargs = dict(
@@ -141,7 +145,7 @@ class HTTPClient(base.HTTPClient):
         returnValue(response)
 
 
-class Consul(base.Consul):
+class Consul(BaseConsul):
     @staticmethod
     def http_connect(host,
                      port,
