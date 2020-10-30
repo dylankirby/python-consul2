@@ -1,3 +1,5 @@
+from .callback import CB
+
 class Event(object):
     """
         The event command provides a mechanism to fire a custom user event to

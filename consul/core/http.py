@@ -1,3 +1,8 @@
+import abc
+import six
+
+from six.moves import urllib
+
 class BaseHTTPClient(six.with_metaclass(abc.ABCMeta, object)):
     def __init__(
         self,

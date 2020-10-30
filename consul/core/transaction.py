@@ -1,3 +1,5 @@
+from .callback import CB
+
 class Txn(object):
     """
         The Transactions endpoints manage updates or fetches of multiple keys

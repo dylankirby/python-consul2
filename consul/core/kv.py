@@ -1,3 +1,7 @@
+import six
+
+from .callback import CB
+
 class KV(object):
     """
         The KV endpoint is used to expose a simple key/value store. This can be

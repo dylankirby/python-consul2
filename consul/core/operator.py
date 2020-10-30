@@ -1,9 +1,13 @@
+import json
+
+from .callback import CB
+
 class Operator(object):
     def __init__(self, agent):
         self.agent = agent
-        self.autopilot = Consul.Operator.Autopilot(agent)
-        self.keyring = Consul.Operator.Keyring(agent)
-        self.raft = Consul.Operator.Raft(agent)
+        self.autopilot = Operator.Autopilot(agent)
+        self.keyring = Operator.Keyring(agent)
+        self.raft = Operator.Raft(agent)
 
     def raft_config(self, token=None):
         """

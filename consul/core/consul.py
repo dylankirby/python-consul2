@@ -6,7 +6,7 @@ from .catalog import Catalog
 from .config import Config
 from .connect import Connect
 from .coordinate import Coordinate
-from .discoveryChain import DiscoveryChain
+from .discovery_chain import DiscoveryChain
 from .event import Event
 from .exceptions import ConsulException
 from .health import Health
@@ -95,8 +95,8 @@ class BaseConsul(object):
         self.operator = Operator(self)
         self.query = Query(self)
         self.scheme = scheme
-        self.session = Consul.Session(self)
-        self.snapshot = Consul.Snapshot(self)
-        self.status = Consul.Status(self)
+        self.session = Session(self)
+        self.snapshot = Snapshot(self)
+        self.status = Status(self)
         self.token = os.getenv('CONSUL_HTTP_TOKEN', token)
-        self.txn = Consul.Txn(self)
+        self.txn = Txn(self)

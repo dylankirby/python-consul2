@@ -1,3 +1,5 @@
+import warnings
+
 class DiscoveryChain(object):
     def __init__(self, agent):
         warnings.warn(

@@ -1,3 +1,8 @@
+import json
+
+from .callback import CB
+from .check import Check
+
 class Agent(object):
     """
         The Agent endpoints are used to interact with a local Consul agent.
@@ -8,9 +13,9 @@ class Agent(object):
 
     def __init__(self, agent):
         self.agent = agent
-        self.service = Consul.Agent.Service(agent)
-        self.check = Consul.Agent.Check(agent)
-        self.connect = Consul.Agent.Connect(agent)
+        self.service = Agent.Service(agent)
+        self.check = Agent.Check(agent)
+        self.connect = Agent.Connect(agent)
 
     def self(self, token=None):
         """

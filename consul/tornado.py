@@ -3,10 +3,10 @@ from __future__ import absolute_import
 from tornado import gen
 from tornado import httpclient
 
-from core.consul import BaseConsul
-from core.http import BaseHTTPClient
+from .core.consul import BaseConsul
+from .core.http import BaseHTTPClient
 
-from core.exceptions import Timeout
+from .core.exceptions import Timeout
 
 __all__ = ['Consul']
 

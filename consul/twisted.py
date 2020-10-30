@@ -13,9 +13,9 @@ from twisted.web._newclient import (
 )
 from twisted.web.client import Agent, HTTPConnectionPool
 
-from core.consul import BaseConsul
-from core.http import BaseHTTPClient
-from consul.base import ConsulException
+from .core.consul import BaseConsul
+from .core.http import BaseHTTPClient
+from .consul.base import ConsulException
 
 
 __all__ = ['Consul']

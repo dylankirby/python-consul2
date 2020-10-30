@@ -1,8 +1,11 @@
-#
-# Conveniences to create consistent callback handlers for endpoints
+import json
+import base64
 
+from . import exceptions
 
 class CB(object):
+    """Conveniences class to create consistent callback handlers for endpoints
+    """
     @classmethod
     def _status(klass, response, allow_404=True):
         # status checking
@@ -12,7 +15,7 @@ class CB(object):
             elif response.code == 401:
                 raise exceptions.ACLDisabled(response.body)
             elif response.code == 403:
-                raise exceptoions.ACLPermissionDenied(response.body)
+                raise exceptions.ACLPermissionDenied(response.body)
             elif response.code == 404:
                 if not allow_404:
                     raise exceptions.NotFound(response.body)

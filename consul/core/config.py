@@ -1,3 +1,7 @@
+import json
+
+from .callback import CB
+
 class Config(object):
     """
         The /config endpoints create, update, delete and query central

@@ -1,7 +1,8 @@
 import requests
 
-from core.http import BaseHTTPClient
-from core.consul import BaseConsul
+from .core.http import BaseHTTPClient
+from .core.consul import BaseConsul
+from .core.response import Response
 
 __all__ = ['Consul']
 
@@ -14,7 +15,7 @@ class HTTPClient(BaseHTTPClient):
     @staticmethod
     def response(response):
         response.encoding = 'utf-8'
-        return base.Response(
+        return Response(
             response.status_code,
             response.headers,
             response.text,

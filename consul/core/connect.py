@@ -1,3 +1,7 @@
+import json
+
+from .callback import CB
+
 class Connect(object):
     """
         The */connect* endpoints provide access to Connect-related
@@ -11,8 +15,8 @@ class Connect(object):
 
     def __init__(self, agent):
         self.agent = agent
-        self.certificates = Consul.Connect.Certificates(agent)
-        self.intentions = Consul.Connect.Intentions(agent)
+        self.certificates = Connect.Certificates(agent)
+        self.intentions = Connect.Intentions(agent)
 
     class Certificates:
         """

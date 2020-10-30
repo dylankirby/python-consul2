@@ -1,3 +1,5 @@
+from .callback import CB
+
 class Health(object):
     # TODO: All of the health endpoints support all consistency modes
     def __init__(self, agent):

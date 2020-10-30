@@ -1,3 +1,5 @@
+from .callback import CB
+
 class Status(object):
     """
         The Status endpoints are used to get information about the status

@@ -1,3 +1,7 @@
+import json
+
+from .callback import CB
+
 class Session(object):
     def __init__(self, agent):
         self.agent = agent

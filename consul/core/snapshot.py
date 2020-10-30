@@ -1,3 +1,5 @@
+from .callback import CB
+
 class Snapshot(object):
     def __init__(self, agent):
         self.agent = agent

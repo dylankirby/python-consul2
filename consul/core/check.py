@@ -1,3 +1,9 @@
+import six
+import logging
+import warnings
+
+log = logging.getLogger(__name__)
+
 class Check(object):
     """
     There are three different kinds of checks: script, http and ttl
