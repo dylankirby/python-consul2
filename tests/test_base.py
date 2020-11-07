@@ -5,10 +5,12 @@ import sys
 
 import pytest
 
-import consul.base
-
-CB = consul.base.CB
-Response = consul.base.Response
+from consul.core import exceptions
+from consul.core.consul import BaseConsul
+from consul.core.check import Check
+from consul.core.http import BaseHTTPClient
+from consul.core.callback import CB
+from consul.core.response import Response
 
 Request = collections.namedtuple(
     'Request', ['method', 'path', 'params', 'data', 'headers'])
@@ -29,7 +31,7 @@ class HTTPClient(object):
         return Request('delete', path, params, None, headers)
 
 
-class Consul(consul.base.Consul):
+class Consul(BaseConsul):
     def http_connect(self, host, port, scheme, verify=True, cert=None,
                      timeout=None):
         return HTTPClient(host, port, scheme, verify=verify, cert=None,
@@ -143,15 +145,15 @@ class TestMeta(object):
 class TestCB(object):
 
     def test_status_200_passes(self):
-        response = consul.base.Response(200, None, None, None)
+        response = Response(200, None, None, None)
         CB._status(response)
 
     @pytest.mark.parametrize(
         'response, expected_exception',
         [
-            (Response(400, None, None, None), consul.base.BadRequest),
-            (Response(401, None, None, None), consul.base.ACLDisabled),
-            (Response(403, None, None, None), consul.base.ACLPermissionDenied),
+            (Response(400, None, None, None), exceptions.BadRequest),
+            (Response(401, None, None, None), exceptions.ACLDisabled),
+            (Response(403, None, None, None), exceptions.ACLPermissionDenied),
         ])
     def test_status_4xx_raises_error(self, response, expected_exception):
         with pytest.raises(expected_exception):
@@ -163,12 +165,12 @@ class TestCB(object):
 
     def test_status_404_dont_allow_404(self):
         response = Response(404, None, None, None)
-        with pytest.raises(consul.base.NotFound):
+        with pytest.raises(exceptions.NotFound):
             CB._status(response, allow_404=False)
 
     def test_status_405_raises_generic_ClientError(self):
         response = Response(405, None, None, None)
-        with pytest.raises(consul.base.ClientError):
+        with pytest.raises(exceptions.ClientError):
             CB._status(response)
 
     @pytest.mark.parametrize(
@@ -178,7 +180,7 @@ class TestCB(object):
             Response(599, None, None, None),
         ])
     def test_status_5xx_raises_error(self, response):
-        with pytest.raises(consul.base.ConsulException):
+        with pytest.raises(exceptions.ConsulException):
             CB._status(response)
 
 
@@ -222,7 +224,7 @@ class TestChecks(object):
         ])
     def test_http_check(self, url, interval, timeout, deregister, header,
                         want):
-        ch = consul.base.Check.http(url, interval, timeout=timeout,
+        ch = Check.http(url, interval, timeout=timeout,
                                     deregister=deregister, header=header)
         assert ch == want
 
@@ -251,7 +253,7 @@ class TestChecks(object):
             }),
         ])
     def test_tcp_check(self, host, port, interval, timeout, deregister, want):
-        ch = consul.base.Check.tcp(host, port, interval, timeout=timeout,
+        ch = Check.tcp(host, port, interval, timeout=timeout,
                                    deregister=deregister)
         assert ch == want
 
@@ -274,12 +276,12 @@ class TestChecks(object):
         ])
     def test_docker_check(self, container_id, shell, script, interval,
                           deregister, want):
-        ch = consul.base.Check.docker(container_id, shell, script, interval,
+        ch = Check.docker(container_id, shell, script, interval,
                                       deregister=deregister)
         assert ch == want
 
     def test_ttl_check(self):
-        ch = consul.base.Check.ttl('1m')
+        ch = Check.ttl('1m')
         assert ch == {'ttl': '1m'}
 
     def test_http_imp(self):
@@ -287,23 +289,23 @@ class TestChecks(object):
         if sys.version_info[0] >= 3:
             error = NotImplementedError
         pytest.raises(error,
-                      consul.base.HTTPClient.get, HTTPClient(), 'b', 'c')
+                      BaseHTTPClient.get, HTTPClient(), 'b', 'c')
         pytest.raises(error,
-                      consul.base.HTTPClient.post, HTTPClient(), 'b', 'c')
+                      BaseHTTPClient.post, HTTPClient(), 'b', 'c')
         pytest.raises(error,
-                      consul.base.HTTPClient.put, HTTPClient(), 'b', 'c')
+                      BaseHTTPClient.put, HTTPClient(), 'b', 'c')
         pytest.raises(error,
-                      consul.base.HTTPClient.delete, HTTPClient(), 'b', 'c')
-        pytest.raises(TypeError, consul.base.HTTPClient)
+                      BaseHTTPClient.delete, HTTPClient(), 'b', 'c')
+        pytest.raises(TypeError, BaseHTTPClient)
 
     def test_env(self):
         os.environ['CONSUL_HTTP_ADDR'] = 'foo'
-        pytest.raises(consul.ConsulException, consul.base.Consul)
+        pytest.raises(exceptions.ConsulException, BaseConsul)
 
         os.environ['CONSUL_HTTP_ADDR'] = 'localhost:8080'
         os.environ['CONSUL_HTTP_SSL'] = 'true'
         os.environ['CONSUL_HTTP_SSL_VERIFY'] = 'true'
-        pytest.raises(AttributeError, consul.base.Consul)
+        pytest.raises(AttributeError, BaseConsul)
         os.environ['CONSUL_HTTP_ADDR'] = ''
         os.environ['CONSUL_HTTP_SSL'] = ''
         os.environ['CONSUL_HTTP_SSL_VERIFY'] = ''
